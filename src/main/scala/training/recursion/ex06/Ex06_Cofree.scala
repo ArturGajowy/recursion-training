@@ -24,10 +24,13 @@ object Ex06_Cofree extends App with Ex06_Traverse {
   // ---------- labelling expressions with Cofree
 
   val inferType: Algebra[Expr, Cofree[Expr, ExprType]] = {
-    case IntValue(v)    => Cofree.apply(IntExpr, IntValue(v)) // note that type order here is switched
-    case DecValue(v)    => Cofree.apply(DecExpr, DecValue(v))
-    case s @ Sum(a, b)  => ??? // TODO
-    case sq @ Square(a) => ??? // TODO
+    case x @ IntValue(v)    => Cofree(IntExpr, x) // note that type order here is switched
+    case x @ DecValue(v)    => Cofree(DecExpr, x)
+    case s @ Sum(a, b)  => (a.head, b.head) match {
+      case (IntExpr, IntExpr) => Cofree(IntExpr, s)
+      case _ => Cofree(DecExpr, s)
+    }
+    case sq @ Square(a) => Cofree(a.head, sq)
   }
 
   def evalToString(exp: Expr[String]): String = exp match {
@@ -49,8 +52,12 @@ object Ex06_Cofree extends App with Ex06_Traverse {
       sum(int(5), dec(-20.2))
     )
 
-  val typedExpr1: Cofree[Expr, ExprType] = expr1.cata(inferType)
+  val typedExpr1:
+    Cofree[Expr, ExprType] = expr1.cata(inferType)
   val typedExpr2: Cofree[Expr, ExprType] = expr2.cata(inferType)
+//
+  println(typedExpr1.head)
+  println(typedExpr2.head)
 
   val toTypedStr: Algebra[EnvT[ExprType, Expr, ?], String] = {
     case EnvT((exprType, IntValue(v))) => s"($v): $exprType"

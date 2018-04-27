@@ -31,7 +31,13 @@ object Ex07_Histomorphism extends App with Ex07_Traverse {
     case IntValue(v)                     => s"$v"
     case DecValue(v)                     => s"$v"
     case Sum(Cofree(a, _), Cofree(b, _)) => s"($a + $b)"
-    case Square(Cofree(a, history))      => ??? // TODO For (x²)²)² print x^6
+    case Square(Cofree(a, history))      =>
+      history match {
+        case Square(Cofree(a, hs)) => ???
+      }
+
+
+//      ??? // TODO For (x²)²)² print x^6
   }
 
   println(expr.histo(smartPrint))

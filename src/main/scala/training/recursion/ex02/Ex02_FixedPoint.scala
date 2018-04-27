@@ -28,10 +28,10 @@ object Ex02_FixedPoint extends App {
   val sumExp: Expr[Expr[Unit]] =
     Sum(
       IntValue[Unit](10), // Expr[Unit]
-      IntValue[Unit](5)
+      Sum[Unit](IntValue[Unit](5), IntValue[Unit](5))
     )
 
-  val division = // TODO type?
+  val division: Expr[Unit] = // TODO type?
     Divide(DecValue(5.2), Sum(IntValue[Unit](10), IntValue[Unit](5)))
 
   val fixedIntExpr: Fix[Expr] = Fix(IntValue[Fix[Expr]](10))
@@ -43,6 +43,13 @@ object Ex02_FixedPoint extends App {
     )
   )
 
-  val fixedDivision: Fix[Expr] = ??? // TODO fix the division expression to match type
+  val fixedDivision: Fix[Expr] =
+    Fix(Divide(
+      Fix(DecValue(5.2)),
+      Fix(Sum(
+        Fix(IntValue(10)),
+        Fix(IntValue(5))
+      ))
+    ))
 
 }
